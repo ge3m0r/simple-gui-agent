@@ -62,4 +62,7 @@ DEBUG_SAVE_SCREENSHOT = os.environ.get("GUI_AGENT_DEBUG_SAVE_SCREENSHOT", "false
 ACCESSIBILITY_FOREGROUND_ONLY = os.environ.get("GUI_AGENT_ACCESSIBILITY_FOREGROUND_ONLY", "true").strip().lower() in ("1", "true", "yes")
 
 # 无障碍树：是否仅在模型返回点击/双击等需要点控件的动作时才获取元素（True=按需获取，用 name 解析；False=每步都获取并传 element_id）
-ACCESSIBILITY_FETCH_ON_CLICK_ONLY = os.environ.get("GUI_AGENT_ACCESSIBILITY_FETCH_ON_CLICK_ONLY", "true").strip().lower() in ("1", "true", "yes")
+ACCESSIBILITY_FETCH_ON_CLICK_ONLY = os.environ.get("GUI_AGENT_ACCESSIBILITY_FETCH_ON_CLICK_ONLY", "false").strip().lower() in ("1", "true", "yes")
+
+# TYPING 前是否自动切换输入法：当要输入的内容为纯英文/数字/符号（URL、命令、路径等）时，先发送该快捷键再输入。留空则不自动切换，由模型在 prompt 中规划。示例: "ctrl,space" 或 "win,space"
+TYPING_IME_SWITCH_FOR_ASCII = (os.environ.get("GUI_AGENT_TYPING_IME_SWITCH_FOR_ASCII", "") or "").strip()

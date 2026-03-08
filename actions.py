@@ -13,7 +13,13 @@ from typing import Any, List, Dict, Optional
 
 import pyautogui
 
-from config import SCREEN_WIDTH, SCREEN_HEIGHT, GRID_ROWS, GRID_COLS
+from config import (
+    SCREEN_WIDTH,
+    SCREEN_HEIGHT,
+    GRID_ROWS,
+    GRID_COLS,
+    TYPING_IME_SWITCH_FOR_ASCII,
+)
 
 logger = logging.getLogger("gui_agent.actions")
 
@@ -218,8 +224,8 @@ def execute_action(
                     )
                     return True
             elif name:
-                # 按 name 解析：仅在需要点击时拉取元素（列表已按最外层优先排序，取第一个匹配）
-                if element_list is None:
+                # 按 name 解析：当未提供元素列表或列表为空时拉取当前可交互元素（与 ACCESSIBILITY_FETCH_ON_CLICK_ONLY 配合：预处理器不拉取则此处拉取）
+                if element_list is None or len(element_list) == 0:
                     try:
                         from accessibility_providers import get_accessibility_provider
                         provider = get_accessibility_provider()
@@ -320,6 +326,23 @@ def execute_action(
         if action_type == "TYPING":
             text = action.get("text", "")
             if text:
+                # 若配置了“输入英文前切换输入法”且当前要输入的内容为纯 ASCII（英文/URL/命令等），先发送切换快捷键
+                if TYPING_IME_SWITCH_FOR_ASCII and text.strip():
+                    raw_to_type = text.rstrip("\r\n") if text.endswith("\n") else text
+                    if raw_to_type.isascii():
+                        try:
+                            keys = [k.strip().lower() for k in TYPING_IME_SWITCH_FOR_ASCII.split(",") if k.strip()]
+                            if keys:
+                                pyautogui.hotkey(*[_normalize_key(k) for k in keys])
+                                time.sleep(0.15)
+                        except Exception as e:
+                            logger.debug("TYPING 前切换输入法失败: %s", e)
+                # 输入前先 Ctrl+A 选中当前焦点处全部内容，再输入，避免在已有内容后追加导致错误
+                try:
+                    pyautogui.hotkey("ctrl", "a")
+                    time.sleep(0.05)
+                except Exception:
+                    pass
                 # 末尾换行表示“输入后提交”，先输入正文再按 Enter（与 UI-TARS 等一致）
                 if text.endswith("\n"):
                     text = text.rstrip("\r\n")

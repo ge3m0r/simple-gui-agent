@@ -210,9 +210,9 @@ class GUIAgent:
         elements = (preprocess_meta or {}).get("elements") if preprocess_meta else None
         step_text = build_step_prompt(
             final_goal=instruction,
-            current_goal_hint="根据截图与历史推断当前子目标。",
+            current_goal_hint=None,
             history_lines=history_lines,
-            expected_output_hint="仅输出一个动作的 JSON 或 WAIT/DONE/FAIL。若上一步未生效请换方式或 FAIL，不要重复。",
+            expected_output_hint=None,
             last_action_no_repeat=last_no_repeat,
             repeated_action_force_hint=repeated_hint,
             elements=elements,
