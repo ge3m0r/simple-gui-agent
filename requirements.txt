@@ -1,0 +1,18 @@
+# GUI Agent - 依赖
+# 截图与桌面控制
+pyautogui>=0.9.54
+Pillow>=10.0.0
+mss>=9.0.0
+
+# 视觉语言模型调用 (Qwen3-VL 使用 OpenAI 兼容接口)
+openai>=1.0.0
+
+# 可选: 阿里云 DashScope 直连 Qwen-VL
+dashscope>=1.14.0
+
+# 可选: Windows 无障碍树混合架构（IMAGE_PREPROCESSOR=accessibility 时需其一）
+# uiautomation>=2.0.0
+# pywinauto>=0.6.8
+
+# 工具
+python-dotenv>=1.0.0
